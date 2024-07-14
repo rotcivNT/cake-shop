@@ -1,0 +1,7 @@
+.heading-wrapper {
+  background-image: url("../../components//images//product-detail-bg.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
