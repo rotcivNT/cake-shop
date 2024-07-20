@@ -7,15 +7,12 @@ interface IProps {
 }
 
 function ProductList({ products, itemPerRow = 4 }: IProps) {
-  let percent = 100 / itemPerRow;
-  if (!Number.isInteger(percent)) {
-    percent = +percent.toFixed(4);
-  }
-
+  const colStyle =
+    itemPerRow === 3
+      ? "grid-cols-[repeat(auto-fill,minmax(min(220px,100%),33.33333%))]"
+      : "grid-cols-[repeat(auto-fill,minmax(min(220px,100%),25%))]";
   return (
-    <div
-      className={`grid grid-cols-[repeat(auto-fill,minmax(min(220px,100%),${percent}%))] justify-center`}
-    >
+    <div className={`grid ${colStyle} justify-center`}>
       {products &&
         products.map((product) => (
           <div className="p-3" key={product.id}>

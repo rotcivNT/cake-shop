@@ -1,6 +1,14 @@
 import Checkout from "@/components/checkout/Checkout";
 import "@/components/products/styles.css";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Thanh toán",
+  description:
+    "Hoàn tất đơn hàng của bạn với các phương thức thanh toán an toàn và tiện lợi.",
+  keywords:
+    "thanh toán, giỏ hàng, đặt hàng, phương thức thanh toán, thanh toán an toàn, giao dịch trực tuyến",
+};
 function CheckoutPage() {
   return (
     <div>

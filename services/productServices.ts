@@ -1,9 +1,8 @@
-"use server";
 
 
 const baseURL = process.env.NEXT_PUBLIC_PRODUCT_BACK_END_URL;
 
-export const getAllProduct = async (url: string,categoryId?: string) => {
+export const getAllProduct = async (url: string, categoryId?: string) => {
   try {
     const response = await fetch(`${baseURL}/get-all-products${url}`, {
       method: "POST",
