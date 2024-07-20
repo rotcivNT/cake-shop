@@ -31,9 +31,10 @@ const schema = yup.object({
 interface IProps {
   data: any;
   email: string;
+  clerkUserId: string;
 }
 
-function AcconutAddress({ data, email }: IProps) {
+function AcconutAddress({ data, email, clerkUserId }: IProps) {
   const initialValue = {
     firstName: data?.fullName?.split(" ")[0] || "",
     lastName: data?.fullName?.split(" ")[1] || "",
@@ -66,7 +67,9 @@ function AcconutAddress({ data, email }: IProps) {
         ward: data.wardId,
         addressDetail: data.detailAddress,
         email,
+        clerkUserId,
       };
+
       const res = await updateUser(payload);
       if (res?.code === 1) {
         mutate(email);

@@ -1,4 +1,5 @@
 import { CartProductProps } from "@/components/cart/Cart";
+import { CategoryProps } from "@/types/category";
 import { CakeProduct } from "@/types/product";
 import { create, createStore } from "zustand";
 

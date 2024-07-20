@@ -16,6 +16,7 @@ function AccountAddressWrapper() {
     <AcconutAddress
       data={data}
       email={user?.emailAddresses[0].emailAddress as string}
+      clerkUserId={user.id}
     />
   );
 }

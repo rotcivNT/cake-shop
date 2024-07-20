@@ -11,7 +11,7 @@ function HomeProduct2() {
     {} as CategoryProps
   );
   const { data, isLoading, error } = useSWR(
-    "87f18fe2-6457-441d-aa45-78aa7e0dc8fd",
+    "3b8be056-0895-4172-911a-79900b88f9b1",
     getAllProductByCateId
   );
 

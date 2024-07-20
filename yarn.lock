@@ -483,6 +483,38 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-dialog@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@radix-ui/react-dialog@npm:1.1.1"
+  dependencies:
+    "@radix-ui/primitive": "npm:1.1.0"
+    "@radix-ui/react-compose-refs": "npm:1.1.0"
+    "@radix-ui/react-context": "npm:1.1.0"
+    "@radix-ui/react-dismissable-layer": "npm:1.1.0"
+    "@radix-ui/react-focus-guards": "npm:1.1.0"
+    "@radix-ui/react-focus-scope": "npm:1.1.0"
+    "@radix-ui/react-id": "npm:1.1.0"
+    "@radix-ui/react-portal": "npm:1.1.1"
+    "@radix-ui/react-presence": "npm:1.1.0"
+    "@radix-ui/react-primitive": "npm:2.0.0"
+    "@radix-ui/react-slot": "npm:1.1.0"
+    "@radix-ui/react-use-controllable-state": "npm:1.1.0"
+    aria-hidden: "npm:^1.1.1"
+    react-remove-scroll: "npm:2.5.7"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/a21e318e8d45bed22067880f66beb4ea91118a6c0d43aa20de495c0373b53c12dfe28f58196d5b33300573a5e24e064ec53648a576f02366fb5a297d887b0860
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-direction@npm:1.1.0":
   version: 1.1.0
   resolution: "@radix-ui/react-direction@npm:1.1.0"
@@ -613,6 +645,26 @@ __metadata:
     "@types/react-dom":
       optional: true
   checksum: 10c0/7e7130fcb0d99197322cd97987e1d7279b6c264fb6be3d883cbfcd49267740d83ca17b431e0d98848afd6067a13ee823ca396a8b63ae68f18a728cf70398c830
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-presence@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@radix-ui/react-presence@npm:1.1.0"
+  dependencies:
+    "@radix-ui/react-compose-refs": "npm:1.1.0"
+    "@radix-ui/react-use-layout-effect": "npm:1.1.0"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/58acb658b15b72991ad7a234ea90995902c470b3a182aa90ad03145cbbeaa40f211700c444bfa14cf47537cbb6b732e1359bc5396182de839bd680843c11bf31
   languageName: node
   linkType: hard
 
@@ -1337,6 +1389,7 @@ __metadata:
   dependencies:
     "@clerk/nextjs": "npm:^5.1.6"
     "@hookform/resolvers": "npm:^3.6.0"
+    "@radix-ui/react-dialog": "npm:^1.1.1"
     "@radix-ui/react-select": "npm:^2.1.1"
     "@radix-ui/react-slot": "npm:^1.1.0"
     "@types/node": "npm:^20"
@@ -1351,11 +1404,13 @@ __metadata:
     eslint-config-next: "npm:14.2.4"
     lucide-react: "npm:^0.396.0"
     next: "npm:14.2.4"
+    next-themes: "npm:^0.3.0"
     nodemailer: "npm:^6.9.14"
     postcss: "npm:^8"
     react: "npm:^18"
     react-dom: "npm:^18"
     react-hook-form: "npm:^7.52.0"
+    sonner: "npm:^1.5.0"
     swr: "npm:^2.2.5"
     tailwind-merge: "npm:^2.3.0"
     tailwindcss: "npm:^3.4.1"
@@ -3435,6 +3490,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"next-themes@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "next-themes@npm:0.3.0"
+  peerDependencies:
+    react: ^16.8 || ^17 || ^18
+    react-dom: ^16.8 || ^17 || ^18
+  checksum: 10c0/72bd670ad6b9f547dc18cece340dfd1ac41e3e7b37eb321d4767db90bfa2c239f937011cd0efe35ca0081f1ea260051bc0868808ef39b0fbff2ddefd7146cec6
+  languageName: node
+  linkType: hard
+
 "next@npm:14.2.4":
   version: 14.2.4
   resolution: "next@npm:14.2.4"
@@ -4364,6 +4429,16 @@ __metadata:
     ip-address: "npm:^9.0.5"
     smart-buffer: "npm:^4.2.0"
   checksum: 10c0/d54a52bf9325165770b674a67241143a3d8b4e4c8884560c4e0e078aace2a728dffc7f70150660f51b85797c4e1a3b82f9b7aa25e0a0ceae1a243365da5c51a7
+  languageName: node
+  linkType: hard
+
+"sonner@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "sonner@npm:1.5.0"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: 10c0/9561b5861bede7f874cc442e447a68c8bfa6e4eadad603bc04e38db35a8b8108741f595a12c9856742062bae230ffedf73122015940491f482c5aa9e68ee85e0
   languageName: node
   linkType: hard
 
