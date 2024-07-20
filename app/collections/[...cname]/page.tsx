@@ -1,9 +1,45 @@
 import Collection from "@/components/collections/Collection";
 import "@/components/products/styles.css";
 import { getCategoryByName } from "@/services/categoryService";
+import { Metadata, ResolvingMetadata } from "next";
 
 interface IProps {
   params: { cname: string | string[] };
+}
+
+export async function generateMetadata(
+  { params }: IProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { cname } = params;
+
+  const res = await getCategoryByName(cname[0]);
+
+  const previousImages = (await parent).openGraph?.images || [];
+
+  if (res && res?.data) {
+    return {
+      title: res.data.name,
+      openGraph: {
+        images: [...previousImages],
+      },
+      description: `Khám phá các sản phẩm ${res.data.name.toLowerCase()} của chúng tôi.`,
+      keywords: [
+        res.data.name.toLowerCase(),
+        "đặt hàng online",
+        "giao hàng tận nơi",
+        "chất lượng cao",
+        "giá tốt",
+      ],
+    };
+  } else {
+    return {
+      title: "Not found",
+      openGraph: {
+        images: [],
+      },
+    };
+  }
 }
 
 export default async function CollectionPage({ params }: IProps) {

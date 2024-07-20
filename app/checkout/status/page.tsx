@@ -1,6 +1,13 @@
 import CheckoutStatus from "@/components/checkout/CheckoutStatus";
 import "@/components/products/styles.css";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Kết quả thanh toán",
+  description: "kết quả thanh toán",
+  keywords:
+    "thanh toán, giỏ hàng, đặt hàng, phương thức thanh toán, thanh toán an toàn, giao dịch trực tuyến",
+};
 function CheckoutStatusPage() {
   return (
     <div>

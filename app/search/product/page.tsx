@@ -1,5 +1,16 @@
 import "@/components/products/styles.css";
 import SearchResultWrapper from "@/components/search-result/SearchResultWrapper";
+import { Metadata, ResolvingMetadata } from "next";
+
+export async function generateMetadata({
+  searchParams,
+}: IProps): Promise<Metadata> {
+  const query = searchParams.q;
+  return {
+    title: `Kết quả tìm kiếm "${query}"`,
+    description: `Kết quả tìm kiếm "${query}" trên TCAKE`,
+  };
+}
 
 interface IProps {
   searchParams: { [key: string]: string | string[] | undefined };

@@ -1,5 +1,15 @@
 import Cart from "@/components/cart/Cart";
 import "@/components/products/styles.css";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Giỏ hàng của bạn",
+  description:
+    "Xem xét và quản lý các mặt hàng trong giỏ hàng của bạn. Thanh toán an toàn, cập nhật dễ dàng và có sẵn các ưu đãi độc quyền.",
+  keywords:
+    "giỏ hàng, thanh toán, cửa hàng trực tuyến, thương mại điện tử, thanh toán an toàn",
+};
+
 function CartPage() {
   return (
     <div>
