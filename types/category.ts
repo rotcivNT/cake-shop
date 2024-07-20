@@ -7,4 +7,5 @@ export interface CategoryProps {
   updatedAt: string;
   parentId?: string;
   products: CakeProduct[];
+  parent?: CategoryProps;
 }

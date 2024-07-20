@@ -10,7 +10,7 @@ function BirthDayCake() {
     {} as CategoryProps
   );
   const { data, isLoading, error } = useSWR(
-    "625c1bdf-abf1-47c6-aafb-4d573c5cd681",
+    "4918cc3b-d41a-4f0e-bf23-cbae56ef487e",
     getAllProductByCateId
   );
   useEffect(() => {

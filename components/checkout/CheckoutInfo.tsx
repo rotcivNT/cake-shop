@@ -78,7 +78,6 @@ function CheckoutInfo({ data, email, userId, products }: IProps) {
     });
   };
   const { mutate } = useSWRConfig();
-  console.log(products);
 
   const onSubmit = async (data: any) => {
     const totalPrice = products.reduce((acc, item) => {
@@ -109,6 +108,7 @@ function CheckoutInfo({ data, email, userId, products }: IProps) {
         orderId: "",
         variantId:
           product.product.productVariants[product.selectedPrice].variant.id,
+        price: product.product.productVariants[product.selectedPrice].price,
       });
     });
     const payload: CreateOrderDto = {

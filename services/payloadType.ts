@@ -31,6 +31,7 @@ export interface OrderDetailDto {
   quantity: number;
   orderId: string;
   variantId: string;
+  price: number
 }
 
 export interface PaymentDetailDto {

@@ -1,10 +1,19 @@
-"use client";
 import { cn } from "@/lib/utils";
+import { getAllCategory } from "@/services/categoryService";
+import { CategoryProps } from "@/types/category";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
-function Navbar() {
-  const pathName = usePathname();
+async function Navbar() {
+  const data = await getAllCategory();
+  let rootCategory: CategoryProps[] = data.data.filter(
+    (item: CategoryProps) => item.parent === null
+  );
+  rootCategory = [...rootCategory].sort((a, b) => {
+    const dateA = new Date(a.createdAt).getTime();
+    const dateB = new Date(b.createdAt).getTime();
+    return dateA - dateB;
+  });
+
   return (
     <nav className="w-full px-5">
       <ul
@@ -16,15 +25,11 @@ function Navbar() {
         <li className="!border-[#C0C906]">
           <Link href="/">TRANG CHỦ</Link>
         </li>
-        <li className="hover:border-[#C0C906]">
-          <Link href="#">BÁNH SINH NHẬT</Link>
-        </li>
-        <li className="hover:border-[#C0C906]">
-          <Link href="#">BÁNH MỲ & BÁNH MẶN</Link>
-        </li>
-        <li className="hover:border-[#C0C906]">
-          <Link href="#">COOKIES & MINICAKE</Link>
-        </li>
+        {rootCategory.map((item) => (
+          <li key={item.id} className="hover:border-[#C0C906] uppercase">
+            <Link href={`/collections/${item.name}`}>{item.name}</Link>
+          </li>
+        ))}
         <li className="hover:border-[#C0C906]">
           <Link href="#">TIN TỨC</Link>
         </li>
