@@ -9,8 +9,8 @@ function AboutUs() {
       <p className="text-[18px] text-[#3d1a1a] text-center font-bold">
         CHÀO MỪNG BẠN ĐẾN VỚI ANHHOA BAKERY
       </p>
-      <div className="flex p-[30px]">
-        <div className="basis-1/2 h-[266px] relative rounded-[10px] overflow-hidden">
+      <div className="flex flex-col gap-3 sm:gap-0 sm:flex-row p-[30px]">
+        <div className="sm:basis-1/2 h-[266px] relative rounded-[10px] overflow-hidden">
           <Image
             src="https://theme.hstatic.net/1000313040/1000406925/14/intro.png?v=2102"
             alt=""

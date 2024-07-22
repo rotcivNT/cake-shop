@@ -9,13 +9,13 @@ interface IProps {
 function ProductList({ products, itemPerRow = 4 }: IProps) {
   const colStyle =
     itemPerRow === 3
-      ? "grid-cols-[repeat(auto-fill,minmax(min(220px,100%),33.33333%))]"
-      : "grid-cols-[repeat(auto-fill,minmax(min(220px,100%),25%))]";
+      ? "sm:grid-cols-[repeat(auto-fill,minmax(min(220px,100%),33.33333%))]"
+      : "sm:grid-cols-[repeat(auto-fill,minmax(min(220px,100%),25%))]";
   return (
-    <div className={`grid ${colStyle} justify-center`}>
+    <div className={`grid ${colStyle} justify-center grid-cols-2`}>
       {products &&
         products.map((product) => (
-          <div className="p-3" key={product.id}>
+          <div className="p-2 sm:p-3" key={product.id}>
             <ProductItem product={product} />
           </div>
         ))}

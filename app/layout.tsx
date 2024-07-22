@@ -22,6 +22,21 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
   },
+  keywords: [
+    "TCAKE",
+    "tcake",
+    "cake",
+    "cake shop",
+    "sweet cake",
+    "bánh ngọt",
+    "bánh tươi",
+    "bánh sinh nhật",
+    "bánh ăn vặt",
+    "đặt hàng",
+    "giao nhanh",
+    "hương vị",
+    "tuyệt hảo",
+  ],
 };
 
 export default function RootLayout({

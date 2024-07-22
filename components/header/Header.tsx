@@ -1,15 +1,17 @@
-import logo from "@/components/images/logo.webp";
+import logo from "@/components/images/logo.png";
 import { Building2, PhoneCall, ShoppingBasket } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import Navbar from "../navbar/Navbar";
 import AccountButton from "./AccountButton";
+import MobileMenuTrigger from "./MobileMenuTrigger";
 import Search from "./Search";
-import Link from "next/link";
+import CartMobileButton from "./CartMobileButton";
 
 function Header() {
   return (
-    <header className="h-[150px] bg-[rgba(91,50,54,0.9)]">
-      <div className="w-[1200px] max-w-full mx-auto flex items-center px-4 flex-wrap">
+    <header className="sm:h-[150px] pb-5 sm:pb-0 bg-[rgba(91,50,54,0.9)]">
+      <div className="w-[1200px] max-w-full h-full mx-auto items-center px-4 flex-wrap block sm:flex">
         <div className="flex-[1.5] flex gap-3 items-center">
           <Link href="/">
             <Image src={logo} alt="LOGO" />
@@ -17,8 +19,11 @@ function Header() {
 
           <Search />
         </div>
-
-        <div className="flex-[3] flex items-center gap-3 justify-end">
+        <div className="flex justify-between items-center">
+          <MobileMenuTrigger />
+          <CartMobileButton />
+        </div>
+        <div className="flex-[3] items-center gap-3 justify-end hidden sm:flex">
           <a className="inline-flex gap-3 items-center" href="tel:0704462651">
             <p className="size-9 flex justify-center items-center bg-[#fff] rounded-full">
               <PhoneCall color="#3D1A1A" size={16} />

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { cn } from "@/lib/utils";
 import { CakeProduct } from "@/types/product";
 import { formatNumberToVND } from "@/utils/formatNumberToVND";
@@ -11,12 +12,17 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import ProductQuickview from "./ProductQuickview";
+import { createMixedString } from "@/utils/createMixString";
+import { useMemo } from "react";
 
 interface IProps {
   product: CakeProduct;
 }
 
 function ProductItem({ product }: IProps) {
+  const mixId = useMemo(() => {
+    return createMixedString(product.name);
+  }, []);
   return (
     <Dialog>
       <div
@@ -39,11 +45,13 @@ function ProductItem({ product }: IProps) {
             <span className="font-bold line-clamp-1 text-[#333] transition-all duration-300">
               {product.name}
             </span>
-            <span className="text-sm">{product.id}</span>
+            <span className="text-sm">{mixId}</span>
           </p>
         </Link>
 
         <div>
+          {/* Using empty span for css */}
+          <span />
           <div className="flex items-stretch h-10">
             <p className="text-white font-bold bg-[#c0c906] px-[10px] leading-10 rounded-bl-md rounded-tr-md z-[1] relative">
               {formatNumberToVND(product.productVariants[0].price)}

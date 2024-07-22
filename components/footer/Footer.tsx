@@ -1,5 +1,5 @@
 import Image from "next/image";
-import logo from "@/components/images/logo.webp";
+import logo from "@/components/images/logo.png";
 import bct from "@/components/images/bct.webp";
 import "./style.css";
 import { Home, Mail, Phone } from "lucide-react";
@@ -8,9 +8,9 @@ function Footer() {
   return (
     <>
       <footer className="footer relative flex flex-wrap p-[30px]">
-        <div className="w-[1200px] max-w-full mx-auto flex flex-wrap">
+        <div className="w-[1200px] max-w-full mx-auto flex flex-col gap-3 sm:gap-0 sm:flex-row flex-wrap">
           <div className="absolute z-[1] inset-0 bg-[rgba(0,0,0,0.6)]" />
-          <div className="relative z-[2] basis-1/4">
+          <div className="relative z-[2] sm:basis-1/4">
             <Image src={logo} alt="" />
             <p className="text-white flex gap-2 pb-1 hover:text-[#c0c906] transition-all duration-200 cursor-pointer">
               <Home size={18} color="#fff" />
@@ -34,7 +34,7 @@ function Footer() {
             </a>
           </div>
 
-          <div className="relative z-[2] basis-1/4">
+          <div className="relative z-[2] sm:basis-1/4">
             <p className="font-bold text-white pb-5">CHÍNH SÁCH</p>
             <ul>
               <li>
@@ -72,7 +72,7 @@ function Footer() {
             </ul>
           </div>
 
-          <div className="relative z-[2] basis-1/4">
+          <div className="relative z-[2] sm:basis-1/4">
             <p className="font-bold text-white pb-5">
               CÔNG TY CỔ PHẦN BÁNH NGỌT ANH HÒA
             </p>
@@ -86,7 +86,7 @@ function Footer() {
             </p>
           </div>
 
-          <div className="relative z-[2] basis-1/4">
+          <div className="relative z-[2] sm:basis-1/4">
             <p className="font-bold text-white pb-5">
               MỖI THÁNG CHÚNG TÔI ĐỀU CÓ NHỮNG ĐỢT GIẢM GIÁ DỊCH VỤ VÀ SẢN PHẨM
               NHẰM TRI ÂN KHÁCH HÀNG. ĐỂ CÓ THỂ CẬP NHẬT KỊP THỜI NHỮNG ĐỢT GIẢM
