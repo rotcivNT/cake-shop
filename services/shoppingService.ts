@@ -1,4 +1,4 @@
-"use server";
+// "use server";
 
 import { CreateOrderDto, PostPaymentDto } from "./payloadType";
 
@@ -27,9 +27,11 @@ export const updateShoppingCart = async (payload: any) => {
   }
 };
 
-export const getShoppingCart = async (userId: string) => {
+export const getShoppingCart = async (url: string) => {
   try {
-    const response = await fetch(`${BASE_URL}/get-cart/${userId}`);
+    const response = await fetch(`${BASE_URL}/${url}`);
+    console.log(response);
+
     if (response.ok) {
       return response.json();
     }
@@ -82,6 +84,41 @@ export const handlePostPayment = async (payload: PostPaymentDto) => {
     return {
       code: 0,
       message: "Something went wrong",
+    };
+  }
+};
+
+export const getOrderByUser = async (userId: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/get-orders-by-user/${userId}`);
+
+    if (response.ok) {
+      return response.json();
+    }
+    return null;
+  } catch (e) {
+    return {
+      code: -1,
+      e,
+    };
+  }
+};
+
+export const getAllOrders = async (orderId?: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/get-orders/${orderId ? orderId : ""}`);
+    const data: any[] = await res.json();
+    if (res.ok) {
+      return {
+        code: 1,
+        msg: "success",
+        data,
+      };
+    }
+  } catch (e) {
+    return {
+      code: -1,
+      msg: e,
     };
   }
 };

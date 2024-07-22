@@ -8,7 +8,7 @@ interface IProps {
 
 function CheckoutProductList({ products }: IProps) {
   return (
-    <div>
+    <div className="space-y-3">
       {products.map((item) => (
         <CheckoutProduct
           product={item}

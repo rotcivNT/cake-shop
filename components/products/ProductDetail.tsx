@@ -1,28 +1,35 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { getProductById } from "@/services/productServices";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
-import useSWR from "swr";
-import "./styles.css";
-import { useMemo, useState } from "react";
-import { CakeProduct } from "@/types/product";
 import { cn } from "@/lib/utils";
+import { getProductById } from "@/services/productServices";
+import { updateShoppingCart } from "@/services/shoppingService";
+import { CakeProduct } from "@/types/product";
+import { createMixedString } from "@/utils/createMixString";
 import { formatNumberToVND } from "@/utils/formatNumberToVND";
 import { useAuth } from "@clerk/nextjs";
-import { updateShoppingCart } from "@/services/shoppingService";
-import { Loader2 } from "lucide-react";
-import ProductDetailLoading from "./ProductDetailLoading";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { createMixedString } from "@/utils/createMixString";
+import useSWR from "swr";
+import ProductDetailLoading from "./ProductDetailLoading";
+import "./styles.css";
+import { Loader2 } from "lucide-react";
 
 function ProductDetail() {
   const productId = usePathname().split("/products/")[1];
   const { data, isLoading, error } = useSWR(productId, getProductById);
+  const [isPending, startTransition] = useTransition();
   const [selectedPrice, setSelectedPrice] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const product: CakeProduct = useMemo(() => {
     if (!isLoading && !error && data) return data;
   }, [data, error, isLoading]);
+
+  const mixId = useMemo(() => {
+    if (product) return createMixedString(product.name);
+    return "";
+  }, [product]);
   const isHasSize = useMemo(() => {
     return (
       product &&
@@ -32,52 +39,54 @@ function ProductDetail() {
   }, [product]);
 
   const auth = useAuth();
-  const onAddToCart = async () => {
-    if (!auth.isSignedIn) {
-      const storeData = {
-        product,
-        selectedPrice,
-        quantity,
-      };
-      const productsStorage: any[] = JSON.parse(
-        localStorage.getItem("products") || "[]"
-      );
-      const existedProductIndex = productsStorage.findIndex(
-        (item) =>
-          item.product.id === storeData.product.id &&
-          item.selectedPrice === storeData.selectedPrice
-      );
-      if (existedProductIndex !== -1) {
-        productsStorage[existedProductIndex].quantity += storeData.quantity;
-      } else {
-        productsStorage.push(storeData);
+  const onAddToCart = () => {
+    startTransition(async () => {
+      if (!auth.isSignedIn) {
+        const storeData = {
+          product,
+          selectedPrice,
+          quantity,
+        };
+        const productsStorage: any[] = JSON.parse(
+          localStorage.getItem("products") || "[]"
+        );
+        const existedProductIndex = productsStorage.findIndex(
+          (item) =>
+            item.product.id === storeData.product.id &&
+            item.selectedPrice === storeData.selectedPrice
+        );
+        if (existedProductIndex !== -1) {
+          productsStorage[existedProductIndex].quantity += storeData.quantity;
+        } else {
+          productsStorage.push(storeData);
+        }
+        localStorage.setItem("products", JSON.stringify(productsStorage));
+        return;
       }
-      localStorage.setItem("products", JSON.stringify(productsStorage));
-      return;
-    }
 
-    if (auth.isSignedIn) {
-      const payload = {
-        type: "add",
-        shoppingSession: {
-          userId: auth.userId,
-        },
-        cartItems: [
-          {
-            productId: product.id,
-            quantity,
-            variantId: product.productVariants[selectedPrice].variant.id,
+      if (auth.isSignedIn) {
+        const payload = {
+          type: "add",
+          shoppingSession: {
+            userId: auth.userId,
           },
-        ],
-      };
+          cartItems: [
+            {
+              productId: product.id,
+              quantity,
+              variantId: product.productVariants[selectedPrice].variant.id,
+            },
+          ],
+        };
 
-      const res = await updateShoppingCart(payload);
-      if (res?.code === 1) {
-        toast("Thông báo", {
-          description: "Đã thêm sản phẩm vào giỏ hàng",
-        });
+        const res = await updateShoppingCart(payload);
+        if (res?.code === 1) {
+          toast("Thông báo", {
+            description: "Đã thêm sản phẩm vào giỏ hàng",
+          });
+        }
       }
-    }
+    });
   };
 
   if (isLoading) return <ProductDetailLoading />;
@@ -103,9 +112,7 @@ function ProductDetail() {
         <div className="basis-2/3 p-7 ml-7 rounded-[10px] border border-[#ddd] bg-white">
           <p className="flex flex-col text-[#3d1a1a]">
             <span className="text-[18px] font-bold">{product.name}</span>
-            <span className="text-sm">
-              Mã sản phẩm: {createMixedString(product.name)}
-            </span>
+            <span className="text-sm">Mã sản phẩm: {mixId}</span>
           </p>
           <hr className="my-6" />
           <p className="text-[#3d1a1a]">
@@ -174,7 +181,11 @@ function ProductDetail() {
               onClick={onAddToCart}
               className="py-[10px] transition-all duration-200 px-4 rounded-[10px] text-white bg-[#3d1a1a] font-bold text-sm mr-3 hover:bg-[#c0c906]"
             >
-              THÊM VÀO GIỎ HÀNG
+              {isPending ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "THÊM VÀO GIỎ HÀNG"
+              )}
             </button>
             <button className="py-[10px] px-4 rounded-[10px] text-white bg-[#c0c906] font-bold text-sm">
               MUA NGAY

@@ -19,8 +19,8 @@ export default async function Collection({
       <h3 className="uppercase text-center mb-10 text-[#333] text-[24px] font-bold">
         {decodeURIComponent(categoryName)}
       </h3>
-      <div className="grid grid-cols-4 gap-[30px] w-[1200px] mx-auto max-w-full px-[30px]">
-        <div className="col-span-1">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-y-[20px] sm:gap-[30px] w-[1200px] mx-auto max-w-full px-3 sm:px-[30px]">
+        <div className="">
           <Menubar
             categoryId={categoryId}
             categoryName={categoryName}

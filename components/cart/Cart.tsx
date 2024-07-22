@@ -27,7 +27,11 @@ function Cart() {
   }));
   const auth = useAuth();
   const [description, setDescription] = useState("");
-  const { data, isLoading, error } = useSWR(auth.userId, getShoppingCart);
+  const { data, isLoading, error } = useSWR(
+    `get-cart/${auth.userId}`,
+    getShoppingCart
+  );
+
   useEffect(() => {
     if (!auth.isSignedIn) {
       const cart = localStorage.getItem("products");
@@ -38,7 +42,7 @@ function Cart() {
   }, []);
   useEffect(() => {
     if (data) {
-      setDescription(data.shoppingSession.description);
+      setDescription(data?.shoppingSession?.description);
       const convertData: CartProductProps[] = [];
       data.cartItems.forEach((cartItem: any) => {
         const product: CakeProduct = JSON.parse(cartItem.productJson);
@@ -143,7 +147,7 @@ function Cart() {
       <h3 className="text-[24px] font-bold text-[#333]">GIỎ HÀNG</h3>
       <hr />
       <div>
-        <div className="flex items-center py-5">
+        <div className="hidden sm:flex items-center py-5">
           <p className="flex-1 text-center">Thông tin chi tiết sản phẩm</p>
           <div className="flex-1 flex justify-between">
             <p>Đơn giá</p>
@@ -186,7 +190,7 @@ function Cart() {
                         </span>
                       </p>
                     </div>
-                    <div className="flex-1 flex justify-between items-center">
+                    <div className="flex-1 flex-col gap-3 sm:gap-0 sm:flex-row flex justify-center sm:justify-between items-center">
                       <p className="text-[22px] text-[#333] font-bold">
                         {formatNumberToVND(
                           item.product.productVariants[item.selectedPrice].price
@@ -194,7 +198,7 @@ function Cart() {
                       </p>
                       {/* Quantity */}
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-[#3d1a1a] font-bold">
+                        <span className="text-sm hidden sm:inline-block text-[#3d1a1a] font-bold">
                           Số lượng
                         </span>
                         <div className="flex items-center">
@@ -232,7 +236,7 @@ function Cart() {
                           </button>
                         </div>
                       </div>
-                      <p className="text-[22px] text-[#333] font-bold basis-[200px] text-right">
+                      <p className="text-[22px] text-[#333] font-bold sm:basis-[200px] text-right">
                         {formatNumberToVND(
                           item.product.productVariants[item.selectedPrice]
                             .price * item.quantity
@@ -250,7 +254,7 @@ function Cart() {
       <hr />
 
       {/* Button */}
-      <div className="flex py-[30px]">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 py-[30px]">
         <div className="flex-[2.5] pr-10">
           <p className="font-bold text-[#333] mb-1">Ghi chú giao hàng:</p>
           <textarea

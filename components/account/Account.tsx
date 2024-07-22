@@ -3,6 +3,7 @@
 import { useClerk, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import OrderHistory from "./OrderHistory";
 
 function Account() {
   const { user } = useUser();
@@ -14,13 +15,13 @@ function Account() {
       <hr className="my-5" />
 
       <div className="flex">
-        <div className="basis-7/12">
+        <div className="basis-7/12 px-3">
           <p className="text-[20px] text-inherit font-[600] mb-3">
             Lịch sử giao dịch
           </p>
-          <p className="text-sm text-inherit">Bạn chưa có đơn hàng nào</p>
+          <OrderHistory />
         </div>
-        <div className="basis-5/12">
+        <div className="basis-5/12 px-3">
           <p className="text-[20px] text-inherit font-[600]">
             Thông tin tài khoản
           </p>

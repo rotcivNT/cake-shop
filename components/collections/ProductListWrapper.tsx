@@ -35,7 +35,7 @@ export default function ProductListWrapper({ categoryId }: IProps) {
   );
   const searchParams = useSearchParams();
   const { data: nextPage } = useSWR(
-    [`?page=${+page + 1}&size=10`, categoryId],
+    [`?page=${+page + 1}&size=12`, categoryId],
     ([url, categoryId]) => getAllProduct(url, categoryId)
   );
   const createQueryString = useCallback(
@@ -48,6 +48,8 @@ export default function ProductListWrapper({ categoryId }: IProps) {
     [searchParams]
   );
   useEffect(() => {
+    console.log(nextPage);
+
     if (nextPage && nextPage.code === 1 && nextPage.data.length === 0) {
       setIsLastPage(true);
     } else {
