@@ -23,16 +23,29 @@ function ProductItem({ product }: IProps) {
   const mixId = useMemo(() => {
     return createMixedString(product.name);
   }, []);
+
   return (
     <Dialog>
       <div
         className={cn(
           "bg-white border border-[#e6e6e6] rounded-[10px] overflow-hidden [&_div:first-child]:hover:scale-[1.05]",
-          "[&_span:first-child]:hover:text-[#C0C906]"
+          "[&_span:first-child]:hover:text-[#C0C906]",
+          product.stop &&
+            "relative opacity-70 pointer-events-none !cursor-not-allowed"
         )}
       >
-        <Link href={`/products/${product.id}`}>
-          <div className="relative pt-[100%] cursor-pointer transition-all duration-300">
+        <Link
+          href={product.stop ? "#" : `/products/${product.id}`}
+          onClick={(e) => product.stop && e.preventDefault()}
+        >
+          <div
+            className={cn(
+              "relative pt-[100%] transition-all cursor-pointer duration-300",
+              {
+                "cursor-not-allowed": product.stop,
+              }
+            )}
+          >
             <Image
               src={product.thumbnail}
               alt="cake"
@@ -41,11 +54,17 @@ function ProductItem({ product }: IProps) {
             />
           </div>
 
-          <p className="p-[10px] text-center cursor-pointer ">
+          <p
+            className={cn("p-[10px] text-center cursor-pointer ", {
+              "cursor-not-allowed": product.stop,
+            })}
+          >
             <span className="font-bold line-clamp-1 text-[#333] transition-all duration-300">
               {product.name}
             </span>
-            <span className="text-sm">{mixId}</span>
+            <span className="text-sm font-bold">
+              {product.stop ? "TẠM NGƯNG" : mixId}
+            </span>
           </p>
         </Link>
 
@@ -57,7 +76,13 @@ function ProductItem({ product }: IProps) {
               {formatNumberToVND(product.productVariants[0].price)}
             </p>
             <DialogTrigger asChild>
-              <button className="bg-[#3d1a1a] px-3 relative -left-1 z-0 rounded-tr-md rounded-br-md">
+              <button
+                className={cn(
+                  "bg-[#3d1a1a] px-3 relative -left-1 z-0 rounded-tr-md rounded-br-md",
+                  product.stop && "opacity-50 cursor-not-allowed"
+                )}
+                disabled={product.stop}
+              >
                 <ShoppingCart size={18} color="#fff" />
               </button>
             </DialogTrigger>

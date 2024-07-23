@@ -13,6 +13,7 @@ import {
 } from "@/services/shoppingService";
 import useSWR from "swr";
 import { useCakeStore } from "@/store/cakeStore";
+import { CartItemLoading } from "./CartItemLoading";
 
 export interface CartProductProps {
   selectedPrice: number;
@@ -106,6 +107,7 @@ function Cart() {
   };
 
   const updateCart = async () => {
+    if (products.length === 0) return;
     if (auth.isSignedIn) {
       const payload: any = {
         shoppingSession: {
@@ -146,111 +148,132 @@ function Cart() {
     <div className="p-[30px] mx-auto w-[1200px] max-w-full">
       <h3 className="text-[24px] font-bold text-[#333]">GIỎ HÀNG</h3>
       <hr />
-      <div>
-        <div className="hidden sm:flex items-center py-5">
-          <p className="flex-1 text-center">Thông tin chi tiết sản phẩm</p>
-          <div className="flex-1 flex justify-between">
-            <p>Đơn giá</p>
-            <p>Số lượng</p>
-            <p>Tổng giá</p>
-          </div>
-        </div>
-        <hr />
-        {/* Cart item */}
+      {products.length > 0 ? (
         <div>
-          {products.map(
-            (item) =>
-              item.quantity > 0 && (
-                <div key={item.product.id + item.selectedPrice}>
-                  <div className="flex mt-5">
-                    <div className="flex-1 flex items-center gap-5">
-                      <Link href="#" className="size-[160px] block relative">
-                        <Image src={item.product.thumbnail} alt="" fill />
-                      </Link>
-                      <p className="flex flex-col gap-5">
-                        <Link
-                          href=""
-                          className="text-[#3d3d1a] text-[20px] font-bold hover:text-[#733131]"
-                        >
-                          {item.product.name}
-                        </Link>
-                        <span className="text-[#666] flex flex-col gap-1">
-                          {
-                            item.product.productVariants[item.selectedPrice]
-                              .variant.variantValue
-                          }
-                          <span
-                            onClick={() =>
-                              onDeleteItem(item.product.id, item.selectedPrice)
-                            }
-                            className="hover:underline cursor-pointer"
+          <div className="hidden sm:flex items-center py-5">
+            <p className="flex-1 text-center">Thông tin chi tiết sản phẩm</p>
+            <div className="flex-1 flex justify-between">
+              <p>Đơn giá</p>
+              <p>Số lượng</p>
+              <p>Tổng giá</p>
+            </div>
+          </div>
+          <hr />
+          {/* Cart item */}
+          <div>
+            {isLoading ? (
+              <>
+                <CartItemLoading />
+                <CartItemLoading />
+                <CartItemLoading />
+              </>
+            ) : (
+              products.map(
+                (item) =>
+                  item.quantity > 0 && (
+                    <div key={item.product.id + item.selectedPrice}>
+                      <div className="flex mt-5">
+                        <div className="flex-1 flex items-center gap-5">
+                          <Link
+                            href="#"
+                            className="size-[160px] block relative"
                           >
-                            Xóa
-                          </span>
-                        </span>
-                      </p>
-                    </div>
-                    <div className="flex-1 flex-col gap-3 sm:gap-0 sm:flex-row flex justify-center sm:justify-between items-center">
-                      <p className="text-[22px] text-[#333] font-bold">
-                        {formatNumberToVND(
-                          item.product.productVariants[item.selectedPrice].price
-                        )}
-                      </p>
-                      {/* Quantity */}
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm hidden sm:inline-block text-[#3d1a1a] font-bold">
-                          Số lượng
-                        </span>
-                        <div className="flex items-center">
-                          <button
-                            onClick={() =>
-                              onUpdateQuantity(
-                                item.product.id,
-                                item.selectedPrice,
-                                false
-                              )
-                            }
-                            className="w-9 py-1 rounded-tl-md rounded-bl-md border border-[#ddd]"
-                          >
-                            -
-                          </button>
-                          <input
-                            className="py-1 border-t border-b border-[#ddd] w-9 px-[1px] text-center bg-transparent"
-                            value={item.quantity}
-                            type="number"
-                            pattern="[0-9]*"
-                            readOnly
-                          />
+                            <Image src={item.product.thumbnail} alt="" fill />
+                          </Link>
+                          <p className="flex flex-col gap-5">
+                            <Link
+                              href=""
+                              className="text-[#3d3d1a] text-[20px] font-bold hover:text-[#733131]"
+                            >
+                              {item.product.name}
+                            </Link>
+                            <span className="text-[#666] flex flex-col gap-1">
+                              {
+                                item.product.productVariants[item.selectedPrice]
+                                  .variant.variantValue
+                              }
+                              <span
+                                onClick={() =>
+                                  onDeleteItem(
+                                    item.product.id,
+                                    item.selectedPrice
+                                  )
+                                }
+                                className="hover:underline cursor-pointer"
+                              >
+                                Xóa
+                              </span>
+                            </span>
+                          </p>
+                        </div>
+                        <div className="flex-1 flex-col gap-3 sm:gap-0 sm:flex-row flex justify-center sm:justify-between items-center">
+                          <p className="text-[22px] text-[#333] font-bold">
+                            {formatNumberToVND(
+                              item.product.productVariants[item.selectedPrice]
+                                .price
+                            )}
+                          </p>
+                          {/* Quantity */}
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm hidden sm:inline-block text-[#3d1a1a] font-bold">
+                              Số lượng
+                            </span>
+                            <div className="flex items-center">
+                              <button
+                                onClick={() =>
+                                  onUpdateQuantity(
+                                    item.product.id,
+                                    item.selectedPrice,
+                                    false
+                                  )
+                                }
+                                className="w-9 py-1 rounded-tl-md rounded-bl-md border border-[#ddd]"
+                              >
+                                -
+                              </button>
+                              <input
+                                className="py-1 border-t border-b border-[#ddd] w-9 px-[1px] text-center bg-transparent"
+                                value={item.quantity}
+                                type="number"
+                                pattern="[0-9]*"
+                                readOnly
+                              />
 
-                          <button
-                            onClick={() =>
-                              onUpdateQuantity(
-                                item.product.id,
-                                item.selectedPrice,
-                                true
-                              )
-                            }
-                            className="w-9 py-1 rounded-tr-md rounded-br-md border border-[#ddd]"
-                          >
-                            +
-                          </button>
+                              <button
+                                onClick={() =>
+                                  onUpdateQuantity(
+                                    item.product.id,
+                                    item.selectedPrice,
+                                    true
+                                  )
+                                }
+                                className="w-9 py-1 rounded-tr-md rounded-br-md border border-[#ddd]"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                          <p className="text-[22px] text-[#333] font-bold sm:basis-[200px] text-right">
+                            {formatNumberToVND(
+                              item.product.productVariants[item.selectedPrice]
+                                .price * item.quantity
+                            )}
+                          </p>
                         </div>
                       </div>
-                      <p className="text-[22px] text-[#333] font-bold sm:basis-[200px] text-right">
-                        {formatNumberToVND(
-                          item.product.productVariants[item.selectedPrice]
-                            .price * item.quantity
-                        )}
-                      </p>
-                    </div>
-                  </div>
 
-                  <hr className="mt-5" />
-                </div>
+                      <hr className="mt-5" />
+                    </div>
+                  )
               )
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <p className="text-center py-10">
+          Không có sản phẩm nào trong giỏ hàng
+        </p>
+      )}
       <hr />
 
       {/* Button */}

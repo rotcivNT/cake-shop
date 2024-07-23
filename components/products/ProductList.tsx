@@ -12,7 +12,7 @@ function ProductList({ products, itemPerRow = 4 }: IProps) {
       ? "sm:grid-cols-[repeat(auto-fill,minmax(min(220px,100%),33.33333%))]"
       : "sm:grid-cols-[repeat(auto-fill,minmax(min(220px,100%),25%))]";
   return (
-    <div className={`grid ${colStyle} justify-center grid-cols-2`}>
+    <div className={`grid ${colStyle} justify-center grid-cols-2 min-h-[60vh]`}>
       {products &&
         products.map((product) => (
           <div className="p-2 sm:p-3" key={product.id}>
