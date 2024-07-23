@@ -48,8 +48,6 @@ export default function ProductListWrapper({ categoryId }: IProps) {
     [searchParams]
   );
   useEffect(() => {
-    console.log(nextPage);
-
     if (nextPage && nextPage.code === 1 && nextPage.data.length === 0) {
       setIsLastPage(true);
     } else {
@@ -68,10 +66,7 @@ export default function ProductListWrapper({ categoryId }: IProps) {
       {isLoading ? (
         <ProductListLoading />
       ) : (
-        products &&
-        products.length > 0 && (
-          <ProductList itemPerRow={3} products={products} />
-        )
+        products && <ProductList itemPerRow={3} products={products} />
       )}
       <Pagination className="py-10">
         <PaginationContent className="gap-3">
