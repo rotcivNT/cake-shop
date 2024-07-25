@@ -7,7 +7,7 @@ const isProtectedRoute = createRouteMatcher(["/checkout(.*)", "/account(.*)"]);
 export default clerkMiddleware(async (auth, req) => {
   const userId = auth().userId;
 
-  if (req.nextUrl.pathname === "/checkout") {
+  if (req.nextUrl.pathname === "/checkout" && userId) {
     const hasItems = await getShoppingCart(`get-cart/${userId}`);
 
     if (!hasItems || (Array.isArray(hasItems) && hasItems.length === 0)) {
