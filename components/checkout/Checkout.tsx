@@ -1,14 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useCakeStore } from "@/store/cakeStore";
 import { formatNumberToVND } from "@/utils/formatNumberToVND";
-import { useMemo } from "react";
+import { useLayoutEffect, useMemo } from "react";
 import CheckoutInfoWrapper from "./CheckoutInfoWrapper";
 import CheckoutProductList from "./CheckoutProductList";
+import { useRouter } from "next/navigation";
 
 function Checkout() {
   const { products } = useCakeStore((state) => ({
     products: state.cartProducts,
   }));
+  const router = useRouter();
   const totalPrice = useMemo(() => {
     return products.reduce((acc, item) => {
       return (
@@ -17,6 +20,12 @@ function Checkout() {
       );
     }, 0);
   }, [products]);
+
+  useLayoutEffect(() => {
+    if (products.length === 0) {
+      router.push("/cart");
+    }
+  }, []);
 
   return (
     <div className="w-[1200px] px-8 max-w-full mx-auto">

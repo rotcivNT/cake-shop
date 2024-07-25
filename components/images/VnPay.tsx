@@ -9,7 +9,7 @@ export const VnPay = () => (
     width="40px"
     height="40px"
     viewBox="0 0 630.383 630.383"
-    enable-background="new 0 0 630.383 630.383"
+    enableBackground="new 0 0 630.383 630.383"
     xmlSpace="preserve"
   >
     <path

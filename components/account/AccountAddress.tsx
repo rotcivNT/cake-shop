@@ -48,7 +48,6 @@ function AcconutAddress({ data, email, clerkUserId }: IProps) {
     register,
     handleSubmit,
     formState: { errors, isDirty },
-    getValues,
     control,
   } = useForm({
     resolver: yupResolver(schema),

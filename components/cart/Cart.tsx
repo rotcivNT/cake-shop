@@ -1,19 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { CakeProduct } from "@/types/product";
-import { formatNumberToVND } from "@/utils/formatNumberToVND";
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { Button } from "../ui/button";
-import { useAuth } from "@clerk/nextjs";
 import {
   getShoppingCart,
   updateShoppingCart,
 } from "@/services/shoppingService";
-import useSWR from "swr";
 import { useCakeStore } from "@/store/cakeStore";
+import { CakeProduct } from "@/types/product";
+import { formatNumberToVND } from "@/utils/formatNumberToVND";
+import { useAuth } from "@clerk/nextjs";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useMemo, useState, useTransition } from "react";
+import useSWR from "swr";
+import { Button } from "../ui/button";
 import { CartItemLoading } from "./CartItemLoading";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export interface CartProductProps {
   selectedPrice: number;
@@ -28,10 +30,11 @@ function Cart() {
   }));
   const auth = useAuth();
   const [description, setDescription] = useState("");
-  const { data, isLoading, error } = useSWR(
+  const { data, isLoading } = useSWR(
     `get-cart/${auth.userId}`,
     getShoppingCart
   );
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     if (!auth.isSignedIn) {
@@ -43,7 +46,7 @@ function Cart() {
   }, []);
   useEffect(() => {
     if (data) {
-      setDescription(data?.shoppingSession?.description);
+      setDescription(data?.shoppingSession?.description || "");
       const convertData: CartProductProps[] = [];
       data.cartItems.forEach((cartItem: any) => {
         const product: CakeProduct = JSON.parse(cartItem.productJson);
@@ -57,6 +60,8 @@ function Cart() {
         });
       });
       setProducts(convertData);
+    } else {
+      setProducts([]);
     }
   }, [data, isLoading]);
   const onUpdateQuantity = (
@@ -107,32 +112,36 @@ function Cart() {
   };
 
   const updateCart = async () => {
-    if (products.length === 0) return;
-    if (auth.isSignedIn) {
-      const payload: any = {
-        shoppingSession: {
-          description,
-          userId: auth.userId,
-        },
-        type: "update",
-        cartItems: [],
-      };
-      products.forEach((item) => {
-        payload.cartItems.push({
-          productId: item.product.id,
-          quantity: item.quantity,
-          variantId:
-            item.product.productVariants[item.selectedPrice].variant.id,
+    startTransition(async () => {
+      if (products.length === 0) return;
+      if (auth.isSignedIn) {
+        const payload: any = {
+          shoppingSession: {
+            description,
+            userId: auth.userId,
+          },
+          type: "update",
+          cartItems: [],
+        };
+        products.forEach((item) => {
+          payload.cartItems.push({
+            productId: item.product.id,
+            quantity: item.quantity,
+            variantId:
+              item.product.productVariants[item.selectedPrice].variant.id,
+          });
         });
-      });
 
-      const res = await updateShoppingCart(payload);
-      if (res?.code === 1) {
-        alert("Cập nhật giỏ hàng thành công");
+        const res = await updateShoppingCart(payload);
+        if (res?.code === 1) {
+          toast("Thông báo", {
+            description: "Cập nhật giỏ hàng thành công !",
+          });
+        }
+      } else {
+        localStorage.setItem("products", JSON.stringify(products));
       }
-    } else {
-      localStorage.setItem("products", JSON.stringify(products));
-    }
+    });
   };
 
   const totalPrice = useMemo(() => {
@@ -143,12 +152,17 @@ function Cart() {
       );
     }, 0);
   }, [products]);
-
   return (
     <div className="p-[30px] mx-auto w-[1200px] max-w-full">
       <h3 className="text-[24px] font-bold text-[#333]">GIỎ HÀNG</h3>
       <hr />
-      {products.length > 0 ? (
+      {isLoading ? (
+        <>
+          <CartItemLoading />
+          <CartItemLoading />
+          <CartItemLoading />
+        </>
+      ) : products.length > 0 ? (
         <div>
           <div className="hidden sm:flex items-center py-5">
             <p className="flex-1 text-center">Thông tin chi tiết sản phẩm</p>
@@ -161,111 +175,100 @@ function Cart() {
           <hr />
           {/* Cart item */}
           <div>
-            {isLoading ? (
-              <>
-                <CartItemLoading />
-                <CartItemLoading />
-                <CartItemLoading />
-              </>
-            ) : (
-              products.map(
-                (item) =>
-                  item.quantity > 0 && (
-                    <div key={item.product.id + item.selectedPrice}>
-                      <div className="flex mt-5">
-                        <div className="flex-1 flex items-center gap-5">
+            {products.map(
+              (item) =>
+                item.quantity > 0 && (
+                  <div key={item.product.id + item.selectedPrice}>
+                    <div className="flex mt-5">
+                      <div className="flex-1 flex items-center gap-5">
+                        <Link href="#" className="size-[160px] block relative">
+                          <Image src={item.product.thumbnail} alt="" fill />
+                        </Link>
+                        <p className="flex flex-col gap-5">
                           <Link
-                            href="#"
-                            className="size-[160px] block relative"
+                            href=""
+                            className="text-[#3d3d1a] text-[20px] font-bold hover:text-[#733131]"
                           >
-                            <Image src={item.product.thumbnail} alt="" fill />
+                            {item.product.name}
                           </Link>
-                          <p className="flex flex-col gap-5">
-                            <Link
-                              href=""
-                              className="text-[#3d3d1a] text-[20px] font-bold hover:text-[#733131]"
-                            >
-                              {item.product.name}
-                            </Link>
-                            <span className="text-[#666] flex flex-col gap-1">
-                              {
-                                item.product.productVariants[item.selectedPrice]
-                                  .variant.variantValue
+                          <span className="text-[#666] flex flex-col gap-1">
+                            {
+                              item.product.productVariants[item.selectedPrice]
+                                .variant.variantValue
+                            }
+                            <span
+                              onClick={() =>
+                                onDeleteItem(
+                                  item.product.id,
+                                  item.selectedPrice
+                                )
                               }
-                              <span
-                                onClick={() =>
-                                  onDeleteItem(
-                                    item.product.id,
-                                    item.selectedPrice
-                                  )
-                                }
-                                className="hover:underline cursor-pointer"
-                              >
-                                Xóa
-                              </span>
+                              className="hover:underline cursor-pointer"
+                            >
+                              Xóa
                             </span>
-                          </p>
-                        </div>
-                        <div className="flex-1 flex-col gap-3 sm:gap-0 sm:flex-row flex justify-center sm:justify-between items-center">
-                          <p className="text-[22px] text-[#333] font-bold">
-                            {formatNumberToVND(
-                              item.product.productVariants[item.selectedPrice]
-                                .price
-                            )}
-                          </p>
-                          {/* Quantity */}
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm hidden sm:inline-block text-[#3d1a1a] font-bold">
-                              Số lượng
-                            </span>
-                            <div className="flex items-center">
-                              <button
-                                onClick={() =>
-                                  onUpdateQuantity(
-                                    item.product.id,
-                                    item.selectedPrice,
-                                    false
-                                  )
-                                }
-                                className="w-9 py-1 rounded-tl-md rounded-bl-md border border-[#ddd]"
-                              >
-                                -
-                              </button>
-                              <input
-                                className="py-1 border-t border-b border-[#ddd] w-9 px-[1px] text-center bg-transparent"
-                                value={item.quantity}
-                                type="number"
-                                pattern="[0-9]*"
-                                readOnly
-                              />
-
-                              <button
-                                onClick={() =>
-                                  onUpdateQuantity(
-                                    item.product.id,
-                                    item.selectedPrice,
-                                    true
-                                  )
-                                }
-                                className="w-9 py-1 rounded-tr-md rounded-br-md border border-[#ddd]"
-                              >
-                                +
-                              </button>
-                            </div>
-                          </div>
-                          <p className="text-[22px] text-[#333] font-bold sm:basis-[200px] text-right">
-                            {formatNumberToVND(
-                              item.product.productVariants[item.selectedPrice]
-                                .price * item.quantity
-                            )}
-                          </p>
-                        </div>
+                          </span>
+                        </p>
                       </div>
+                      <div className="flex-1 flex-col gap-3 sm:gap-0 sm:flex-row flex justify-center sm:justify-between items-center">
+                        <p className="text-[22px] text-[#333] font-bold">
+                          {formatNumberToVND(
+                            item.product.productVariants[item.selectedPrice]
+                              .price
+                          )}
+                        </p>
+                        {/* Quantity */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm hidden sm:inline-block text-[#3d1a1a] font-bold">
+                            Số lượng
+                          </span>
+                          <div className="flex items-center">
+                            <button
+                              onClick={() =>
+                                onUpdateQuantity(
+                                  item.product.id,
+                                  item.selectedPrice,
+                                  false
+                                )
+                              }
+                              className="w-9 py-1 rounded-tl-md rounded-bl-md border border-[#ddd]"
+                            >
+                              -
+                            </button>
+                            <input
+                              className="py-1 border-t border-b border-[#ddd] w-9 px-[1px] text-center bg-transparent"
+                              value={item.quantity}
+                              type="number"
+                              pattern="[0-9]*"
+                              readOnly
+                            />
 
-                      <hr className="mt-5" />
+                            <button
+                              onClick={() =>
+                                onUpdateQuantity(
+                                  item.product.id,
+                                  item.selectedPrice,
+                                  true
+                                )
+                              }
+                              className="w-9 py-1 rounded-tr-md rounded-br-md border border-[#ddd]"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-[22px] text-[#333] font-bold sm:basis-[200px] text-right">
+                          {formatNumberToVND(
+                            item.product.productVariants[item.selectedPrice]
+                              .price * item.quantity
+                          )}
+                        </p>
+                      </div>
                     </div>
-                  )
-              )
+
+                    <hr className="mt-5" />
+                  </div>
+                )
             )}
           </div>
         </div>
@@ -277,44 +280,50 @@ function Cart() {
       <hr />
 
       {/* Button */}
-      <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 py-[30px]">
-        <div className="flex-[2.5] pr-10">
-          <p className="font-bold text-[#333] mb-1">Ghi chú giao hàng:</p>
-          <textarea
-            className="block w-full outline-none border border-[#ddd] p-2"
-            rows={4}
-            name=""
-            id=""
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          ></textarea>
-        </div>
-        <div className="flex-1 flex flex-col items-end">
-          <span className="text-[22px] text-[#333] font-bold">
-            <span className="text-sm font-normal">Tổng tiền</span>{" "}
-            {formatNumberToVND(totalPrice)}
-          </span>
-          <span className=" text-[#333] italic">Vận chuyển</span>
-          <div className="mt-5 flex items-center gap-3 *:rounded-[4px]">
-            <Button onClick={updateCart} variant="primary">
-              Cập nhật
-            </Button>
-            <Button onClick={deleteAllCart} variant="primary">
-              Xóa giỏ hàng
-            </Button>
-            <Button variant="primary">
-              <Link
-                href={{
-                  pathname: "/checkout",
-                  query: `description=${description}`,
-                }}
+      {products.length > 0 && (
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 py-[30px]">
+          <div className="flex-[2.5] pr-10">
+            <p className="font-bold text-[#333] mb-1">Ghi chú giao hàng:</p>
+            <textarea
+              className="block w-full outline-none border border-[#ddd] p-2"
+              rows={4}
+              name=""
+              id=""
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            ></textarea>
+          </div>
+          <div className="flex-1 flex flex-col items-end">
+            <span className="text-[22px] text-[#333] font-bold">
+              <span className="text-sm font-normal">Tổng tiền</span>{" "}
+              {formatNumberToVND(totalPrice)}
+            </span>
+            <span className=" text-[#333] italic">Vận chuyển</span>
+            <div className="mt-5 flex items-center gap-3 *:rounded-[4px]">
+              <Button
+                onClick={updateCart}
+                className="min-w-[100px]"
+                variant="primary"
               >
-                Thanh toán
-              </Link>
-            </Button>
+                {isPending ? <Loader2 className="animate-spin" /> : "Cập nhật"}
+              </Button>
+              <Button onClick={deleteAllCart} variant="primary">
+                Xóa giỏ hàng
+              </Button>
+              <Button variant="primary">
+                <Link
+                  href={{
+                    pathname: "/checkout",
+                    query: `description=${description}`,
+                  }}
+                >
+                  Thanh toán
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -30,10 +30,9 @@ export const updateShoppingCart = async (payload: any) => {
 export const getShoppingCart = async (url: string) => {
   try {
     const response = await fetch(`${BASE_URL}/${url}`);
-    console.log(response);
-
     if (response.ok) {
-      return response.json();
+      const data = await response.json();
+      return data;
     }
     return null;
   } catch (e) {
