@@ -1,11 +1,21 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { getShoppingCart } from "./services/shoppingService";
+import { NextResponse } from "next/server";
 
 const isProtectedRoute = createRouteMatcher(["/checkout(.*)", "/account(.*)"]);
 
-export default clerkMiddleware((auth, req) => {
-  if (!auth().userId && isProtectedRoute(req)) {
-    // Add custom logic to run before redirecting
+export default clerkMiddleware(async (auth, req) => {
+  const userId = auth().userId;
 
+  if (req.nextUrl.pathname === "/checkout") {
+    const hasItems = await getShoppingCart(`get-cart/${userId}`);
+
+    if (!hasItems || (Array.isArray(hasItems) && hasItems.length === 0)) {
+      // Nếu giỏ hàng trống, chuyển hướng về trang giỏ hàng
+      return NextResponse.redirect(new URL("/cart", req.url));
+    }
+  }
+  if (!userId && isProtectedRoute(req)) {
     return auth().redirectToSignIn();
   }
 });
