@@ -31,20 +31,19 @@ function Cart() {
   const auth = useAuth();
   const [description, setDescription] = useState("");
   const { data, isLoading } = useSWR(
-    `get-cart/${auth.userId}`,
+    `${auth.isSignedIn ? `get-cart/${auth.userId}` : null}`,
     getShoppingCart
   );
   const [isPending, startTransition] = useTransition();
-
   useEffect(() => {
     if (!auth.isSignedIn) {
       const cart = localStorage.getItem("products");
       if (cart) {
         setProducts(JSON.parse(cart));
       }
+      return;
     }
-  }, []);
-  useEffect(() => {
+
     if (data) {
       setDescription(data?.shoppingSession?.description || "");
       const convertData: CartProductProps[] = [];
