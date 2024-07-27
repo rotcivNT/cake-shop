@@ -50,6 +50,9 @@ export default function ProductQuickview({ product }: IProps) {
           productsStorage.push(storeData);
         }
         localStorage.setItem("products", JSON.stringify(productsStorage));
+        toast("Thông báo", {
+          description: "Đã thêm sản phẩm vào giỏ hàng",
+        });
         return;
       }
 
