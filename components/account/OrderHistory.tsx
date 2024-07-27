@@ -9,6 +9,7 @@ const paymentStatus = {
   PENDING: "Chờ xử lý",
   SUCCESS: "Thành công",
   FAILED: "Thất bại",
+  PAID: "Đã thanh toán",
 };
 
 const LoadingSkeleton = () => (
@@ -34,6 +35,7 @@ const LoadingSkeleton = () => (
 export default function OrderHistory() {
   const { user } = useUser();
   const { data, isLoading } = useSWR(user?.id, getOrderByUser);
+  console.log(data);
 
   return (
     <div className="space-y-5">
