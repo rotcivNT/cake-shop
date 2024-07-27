@@ -1,9 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useCakeStore } from "@/store/cakeStore";
 import { formatNumberToVND } from "@/utils/formatNumberToVND";
-import { useMemo } from "react";
+import { useLayoutEffect, useMemo } from "react";
 import CheckoutInfoWrapper from "./CheckoutInfoWrapper";
 import CheckoutProductList from "./CheckoutProductList";
+import { useRouter } from "next/navigation";
 
 function Checkout() {
   const { products } = useCakeStore((state) => ({

@@ -2,7 +2,10 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { getProductById } from "@/services/productServices";
-import { updateShoppingCart } from "@/services/shoppingService";
+import {
+  getShoppingCart,
+  updateShoppingCart,
+} from "@/services/shoppingService";
 import { CakeProduct } from "@/types/product";
 import { createMixedString } from "@/utils/createMixString";
 import { formatNumberToVND } from "@/utils/formatNumberToVND";
@@ -15,6 +18,8 @@ import useSWR from "swr";
 import ProductDetailLoading from "./ProductDetailLoading";
 import "./styles.css";
 import { Loader2 } from "lucide-react";
+import { useSWRConfig } from "swr";
+import Link from "next/link";
 
 function ProductDetail() {
   const productId = usePathname().split("/products/")[1];
@@ -25,7 +30,7 @@ function ProductDetail() {
   const product: CakeProduct = useMemo(() => {
     if (!isLoading && !error && data) return data;
   }, [data, error, isLoading]);
-
+  const { mutate } = useSWRConfig();
   const mixId = useMemo(() => {
     if (product) return createMixedString(product.name);
     return "";
@@ -61,6 +66,9 @@ function ProductDetail() {
           productsStorage.push(storeData);
         }
         localStorage.setItem("products", JSON.stringify(productsStorage));
+        toast("Thông báo", {
+          description: "Đã thêm sản phẩm vào giỏ hàng",
+        });
         return;
       }
 
@@ -81,6 +89,10 @@ function ProductDetail() {
 
         const res = await updateShoppingCart(payload);
         if (res?.code === 1) {
+          mutate(`get-cart/${auth.userId}`, async () => {
+            const newData = await getShoppingCart(`get-cart/${auth.userId}`);
+            return newData;
+          });
           toast("Thông báo", {
             description: "Đã thêm sản phẩm vào giỏ hàng",
           });
@@ -176,10 +188,10 @@ function ProductDetail() {
             </div>
           </div>
           {/* Button */}
-          <div className="mt-5">
+          <div className="mt-5 flex items-center">
             <button
               onClick={onAddToCart}
-              className="py-[10px] transition-all duration-200 px-4 rounded-[10px] text-white bg-[#3d1a1a] font-bold text-sm mr-3 hover:bg-[#c0c906]"
+              className="py-[10px] justify-center flex h-10 min-w-[200px] transition-all duration-200 px-4 rounded-[10px] text-white bg-[#3d1a1a] font-bold text-sm mr-3 hover:bg-[#c0c906]"
             >
               {isPending ? (
                 <Loader2 className="animate-spin" />
@@ -187,9 +199,12 @@ function ProductDetail() {
                 "THÊM VÀO GIỎ HÀNG"
               )}
             </button>
-            <button className="py-[10px] px-4 rounded-[10px] text-white bg-[#c0c906] font-bold text-sm">
+            <Link
+              href="/cart"
+              className="py-[10px] px-4 rounded-[10px] text-white bg-[#c0c906] font-bold text-sm"
+            >
               MUA NGAY
-            </button>
+            </Link>
           </div>
         </div>
       </div>

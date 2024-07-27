@@ -1,5 +1,8 @@
 import { cn } from "@/lib/utils";
-import { updateShoppingCart } from "@/services/shoppingService";
+import {
+  getShoppingCart,
+  updateShoppingCart,
+} from "@/services/shoppingService";
 import { CakeProduct } from "@/types/product";
 import { createMixedString } from "@/utils/createMixString";
 import { formatNumberToVND } from "@/utils/formatNumberToVND";
@@ -9,6 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
+import { mutate } from "swr";
 
 interface IProps {
   product: CakeProduct;
@@ -67,6 +71,10 @@ export default function ProductQuickview({ product }: IProps) {
         const res = await updateShoppingCart(payload);
 
         if (res?.code === 1) {
+          mutate(`get-cart/${auth.userId}`, async () => {
+            const newData = await getShoppingCart(`get-cart/${auth.userId}`);
+            return newData;
+          });
           toast("Thông báo", {
             description: "Đã thêm sản phẩm vào giỏ hàng",
           });
@@ -158,10 +166,10 @@ export default function ProductQuickview({ product }: IProps) {
             </div>
           </div>
           {/* Button */}
-          <div className="mt-5">
+          <div className="mt-5 flex items-center">
             <button
               onClick={onAddToCart}
-              className="py-[10px] transition-all duration-200 px-4 rounded-[10px] text-white bg-[#3d1a1a] font-bold text-sm mr-3 hover:bg-[#c0c906]"
+              className="py-[10px] justify-center flex h-10 min-w-[200px] transition-all duration-200 px-4 rounded-[10px] text-white bg-[#3d1a1a] font-bold text-sm mr-3 hover:bg-[#c0c906]"
             >
               {isPending ? (
                 <Loader2 className="animate-spin" />

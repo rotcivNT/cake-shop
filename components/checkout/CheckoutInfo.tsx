@@ -7,20 +7,26 @@ import {
   PaymentStatus,
   PostPaymentDto,
 } from "@/services/payloadType";
-import { createOrder, handlePostPayment } from "@/services/shoppingService";
+import {
+  createOrder,
+  getShoppingCart,
+  handlePostPayment,
+} from "@/services/shoppingService";
 import { formatNumberToVND } from "@/utils/formatNumberToVND";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { useSWRConfig } from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import * as yup from "yup";
 import AddressSelect from "../account/AddressSelect";
 import { CartProductProps } from "../cart/Cart";
 import { Cod } from "../images/Cod";
 import { VnPay } from "../images/VnPay";
 import { Button } from "../ui/button";
+import { useUser } from "@clerk/nextjs";
+import { getUserByEmail, updateUser } from "@/services/authServices";
 const schema = yup.object({
   firstName: yup.string().required("Họ và tên đệm không được để trống"),
   lastName: yup.string().required("Tên không được để trống"),
@@ -75,8 +81,34 @@ function CheckoutInfo({ data, email, userId, products }: IProps) {
       [key]: value,
     });
   };
+
+  const { user } = useUser();
+
+  const { data: userData, isLoading: userLoading } = useSWR(
+    user?.emailAddresses[0].emailAddress,
+    getUserByEmail
+  );
   const { mutate } = useSWRConfig();
   const router = useRouter();
+  const onCreateUser = async (data: any) => {
+    const payload = {
+      fullName: data.firstName + " " + data.lastName,
+      phoneNumber: data.phoneNumber,
+      district: data.districtId,
+      province: data.provinceId,
+      ward: data.wardId,
+      addressDetail: data.detailAddress,
+      email,
+      clerkUserId: user?.id,
+    };
+
+    const res = await updateUser(payload);
+    if (res?.code === 1) {
+      mutate(email);
+      router.push("/account");
+    }
+    return res;
+  };
   const onSubmit = (data: any) => {
     startTransition(async () => {
       const totalPrice = products.reduce((acc, item) => {
@@ -115,6 +147,10 @@ function CheckoutInfo({ data, email, userId, products }: IProps) {
         orderDetails,
         paymentDetail,
       };
+      if (userData.code === 0) {
+        const userCreated = await onCreateUser(data);
+        console.log(userCreated);
+      }
       const res = await createOrder(payload);
 
       if (res && res?.code === 1) {
@@ -203,7 +239,10 @@ function CheckoutInfo({ data, email, userId, products }: IProps) {
           };
           const resPostPayment = await handlePostPayment(postPaymentPayload);
           if (resPostPayment?.code === 1) {
-            mutate(`/get-cart/${userId}`);
+            mutate(`get-cart/${userId}`, async () => {
+              const newData = await getShoppingCart(`get-cart/${userId}`);
+              return newData;
+            });
             router.push("/thank-you");
           }
         }
@@ -212,7 +251,7 @@ function CheckoutInfo({ data, email, userId, products }: IProps) {
   };
   return (
     <div className="pb-10">
-      <h3 className="px-8">Thông tin thanh toán</h3>
+      <h3 className="px-8 pb-5">Thông tin thanh toán</h3>
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col sm:flex-row">
